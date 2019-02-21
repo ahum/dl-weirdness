@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const count = process.argv[2] || 80;
 const http = require("http");
 
@@ -70,8 +69,11 @@ const logRun = async (n, fn) => {
 };
 
 const run = async () => {
-  const counts = _.times(count);
 
+  const counts = [];
+  for(var i = 0; i < count; i++){
+    counts.push(i);
+  }
   await logRun("serialHttp", () => series(counts.map(n => () => nHttp(n))));
   await logRun("parallelHttp", () => Promise.all(counts.map(n => nHttp(n))));
 
