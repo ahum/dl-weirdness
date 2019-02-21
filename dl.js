@@ -1,29 +1,8 @@
 const _ = require("lodash");
-const debug = require("debug");
-const fetch = require("node-fetch");
-const { exec } = require("child_process");
 const count = process.argv[2] || 80;
 const http = require("http");
 
-// const BPromise = require("bluebird");
 console.log("count:", count);
-const testText = _.times(100)
-  .map(
-    n => `This is test text ${n}
-`
-  )
-  .join("");
-
-const log = debug("dl");
-
-const dummy = () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, 300);
-  });
-};
-
 require("http").globalAgent.maxSockets = Infinity;
 
 const nHttp = () => {
@@ -81,35 +60,6 @@ const series = arr => {
 
 const URL = "http://www.mocky.io/v2/5c6e99593400005200892dde";
 
-const withFetch = async count => {
-  log(count, "fetch - start");
-
-  return fetch(URL, {
-    headers: {
-      Accept: "application/json"
-    }
-  }).then(r => {
-    log(count, "fetch - done");
-    return r.json();
-  });
-};
-
-const curl = count => {
-  log(count, "curl - start");
-  return new Promise((resolve, reject) => {
-    const cmd = `curl \
-   '${URL}' \
-   --header 'Accept: application/json'`;
-    exec(cmd, (err, stdout) => {
-      if (err) {
-        reject(err);
-      } else {
-        log(count, "curl - done");
-        resolve(JSON.parse(stdout));
-      }
-    });
-  });
-};
 
 const logRun = async (n, fn) => {
   console.log(n, "...");
@@ -122,24 +72,9 @@ const logRun = async (n, fn) => {
 const run = async () => {
   const counts = _.times(count);
 
-  // await logRun("serialFetch", () =>
-  //   series(counts.map(n => () => withFetch(n)))
-  // );
-
-  // await logRun("dummy", () => Promise.all(counts.map(n => dummy(n))));
-
-  // await logRun("serialCurl", () => series(counts.map(n => () => curl(n))));
-  // await logRun("parallelCurl", () => Promise.all(counts.map(n => curl(n))));
   await logRun("serialHttp", () => series(counts.map(n => () => nHttp(n))));
   await logRun("parallelHttp", () => Promise.all(counts.map(n => nHttp(n))));
 
-  // await logRun("parallelWithFetch", () =>
-  //   Promise.all(counts.map(n => withFetch(n)))
-  // );
-
-  // await logRun("bluebirdWithFetch", () =>
-  //   BPromise.all(counts.map(n => withFetch(n)))
-  // );
 };
 
 run().catch(e => console.error(e));
