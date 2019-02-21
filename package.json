@@ -1,0 +1,22 @@
+{
+  "name": "gc-dl-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^2.4.2",
+    "lodash": "^4.17.11",
+    "debug": "^4.1.1",
+    "googleapis": "^37.2.0",
+    "node-fetch": "^2.3.0",
+    "bluebird": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.1.6"
+  }
+}
