@@ -2,11 +2,11 @@ const _ = require("lodash");
 const debug = require("debug");
 const fetch = require("node-fetch");
 const { exec } = require("child_process");
-const count = 20;
+const count = process.argv[2] || 80;
 const http = require("http");
 
-const BPromise = require("bluebird");
-
+// const BPromise = require("bluebird");
+console.log("count:", count);
 const testText = _.times(100)
   .map(
     n => `This is test text ${n}
@@ -122,14 +122,15 @@ const logRun = async (n, fn) => {
 const run = async () => {
   const counts = _.times(count);
 
-  await logRun("serialFetch", () =>
-    series(counts.map(n => () => withFetch(n)))
-  );
+  // await logRun("serialFetch", () =>
+  //   series(counts.map(n => () => withFetch(n)))
+  // );
 
-  await logRun("dummy", () => Promise.all(counts.map(n => dummy(n))));
+  // await logRun("dummy", () => Promise.all(counts.map(n => dummy(n))));
 
-  await logRun("serialCurl", () => series(counts.map(n => () => curl(n))));
-  await logRun("parallelCurl", () => Promise.all(counts.map(n => curl(n))));
+  // await logRun("serialCurl", () => series(counts.map(n => () => curl(n))));
+  // await logRun("parallelCurl", () => Promise.all(counts.map(n => curl(n))));
+  await logRun("serialHttp", () => series(counts.map(n => () => nHttp(n))));
   await logRun("parallelHttp", () => Promise.all(counts.map(n => nHttp(n))));
 
   // await logRun("parallelWithFetch", () =>
