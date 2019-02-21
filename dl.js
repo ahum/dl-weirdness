@@ -24,6 +24,8 @@ const dummy = () => {
   });
 };
 
+require("http").globalAgent.maxSockets = Infinity;
+
 const nHttp = () => {
   return new Promise((resolve, reject) => {
     http
