@@ -18,7 +18,7 @@ const opts = {
 for (i = 0; i < count; i++) {
   //const keepAliveAgent = new http.Agent({ keepAlive: true });
   http
-    .get(URL, function(res) {
+    .get(URL, { agent: false }, function(res) {
       console.log(j);
       results.push(res.statusCode);
       j++;
