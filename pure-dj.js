@@ -1,7 +1,6 @@
 var http = require("http");
 
 var results = [];
-var j = 0;
 
 //require("http").globalAgent.maxSockets = 2; //Infinity;
 const count = process.argv[2] || 80;
@@ -15,19 +14,46 @@ const opts = {
   }
 };
 
-for (i = 0; i < count; i++) {
-  //const keepAliveAgent = new http.Agent({ keepAlive: true });
-  http
-    .get(URL, { agent: false }, function(res) {
-      console.log(j);
-      results.push(res.statusCode);
-      j++;
+const run = (label, agent, done) => {
+  var j = 0;
+  console.log(`\n${label}...`);
+  console.time(label);
 
-      if (j == i) {
-        // last request
-        console.timeEnd("loop");
-        process.exit();
+  for (i = 0; i < count; i++) {
+    //const keepAliveAgent = new http.Agent({ keepAlive: true });
+
+    let a = typeof agent === "function" ? agent() : agent;
+    //agent = agentType === 'none' ? false : agentType === 'new' ? new http.Agent({keepAlive: true})
+    http
+      .get(URL, { agent: a }, function(res) {
+        // console.log(j);
+        results.push(res.statusCode);
+        j++;
+
+        if (j == i) {
+          // last request
+          console.timeEnd(label);
+          done();
+        }
+      })
+      .end();
+  }
+};
+
+run("agent:false", false, () => {
+  run("agent:undefined", undefined, () => {
+    run(
+      "agent:new",
+      () => new http.Agent({ keepAlive: true }),
+      () => {
+        run(
+          "agent:new:keepAlive:false",
+          () => new http.Agent({ keepAlive: false }),
+          () => {
+            process.exit(0);
+          }
+        );
       }
-    })
-    .end();
-}
+    );
+  });
+});
