@@ -3,7 +3,7 @@ var http = require("http");
 var results = [];
 var j = 0;
 
-require("http").globalAgent.maxSockets = 2; //Infinity;
+//require("http").globalAgent.maxSockets = 2; //Infinity;
 const count = process.argv[2] || 80;
 const URL = "http://www.mocky.io/v2/5c6e99593400005200892dde";
 console.log("count:", count);
