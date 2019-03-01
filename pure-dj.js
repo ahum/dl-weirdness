@@ -1,11 +1,13 @@
 var http = require("http");
 
 var results = [];
+const maxSockets = process.argv[3] || Infinity;
 
-//require("http").globalAgent.maxSockets = 2; //Infinity;
+require("http").globalAgent.maxSockets = maxSockets;
 const count = process.argv[2] || 80;
 const URL = "http://www.mocky.io/v2/5c6e99593400005200892dde";
 console.log("count:", count);
+console.log("maxSockets:", maxSockets);
 console.time("loop");
 
 const opts = {
@@ -43,7 +45,7 @@ const run = (label, agent, done) => {
 run("agent:false", false, () => {
   run("agent:undefined", undefined, () => {
     run(
-      "agent:new",
+      "agent:new:keepAlive:true",
       () => new http.Agent({ keepAlive: true }),
       () => {
         run(
